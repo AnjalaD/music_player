@@ -15,18 +15,26 @@ class SongQueueTile extends StatelessWidget {
     final MusicPlayerCore player = Provider.of<MusicPlayerCore>(context);
     final bool isSelected = player.currentSongPosition == index;
 
-    return ListTile(
-      dense: true,
-      title: Text(songInfo.title),
-      subtitle: Text(songInfo.artist),
-      onTap: () => player.playNow(index),
-      onLongPress: () => player.removeFromQueue(index),
-      leading: Container(
-        child: Helper.getAlbumArt(songInfo),
-        height: 40.00,
+    return Dismissible(
+      background: Container(color: Colors.red),
+      key: Key(songInfo.toString()),
+      onDismissed: (direction) {
+        player.removeFromQueue(index);
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text("Song Removed from Queue!")));
+      },
+      child: ListTile(
+        dense: true,
+        title: Text(songInfo.title),
+        subtitle: Text(songInfo.artist),
+        onTap: () => player.playNow(index),
+        leading: Container(
+          child: Helper.getAlbumArt(songInfo),
+          height: 40.00,
+        ),
+        trailing: isSelected ? Icon(Icons.music_note) : null,
+        selected: isSelected,
       ),
-      trailing: isSelected ? Icon(Icons.music_note) : null,
-      selected: isSelected,
     );
   }
 }

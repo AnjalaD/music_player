@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
 class MusicPlayerCore extends ChangeNotifier {
-  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-
   List<SongInfo> _songs = [];
   SongInfo _currentSong;
   int _currentSongPosition;
-  AudioPlayer audioPlayer = AudioPlayer(playerId: 'qwyebk2bhe1ky2');
+  final AudioPlayer audioPlayer = AudioPlayer(playerId: 'qwyebk2bhe1ky2');
+
+  MusicPlayerCore() {
+    audioPlayer.onPlayerCompletion.listen((_) {
+      print('playing next song');
+      nextSong();
+    });
+  }
 
   List<SongInfo> get queue => _songs;
 
@@ -57,9 +62,8 @@ class MusicPlayerCore extends ChangeNotifier {
   }
 
   void playNow(int index) {
-    _currentSong = _songs[index];
-    _currentSongPosition = index;
-    _play(_currentSong);
+    _setCurrentSong(index);
+    print('current song: ' + _currentSong.title);
     notifyListeners();
   }
 
@@ -94,15 +98,10 @@ class MusicPlayerCore extends ChangeNotifier {
   void nextSong() {
     if (_currentSongPosition != null) {
       if (_currentSongPosition >= _songs.length - 1) {
-        _currentSong = _songs[0];
-        _currentSongPosition = 0;
+        _setCurrentSong(0);
       } else {
-        _currentSongPosition++;
-        _currentSong = _songs[_currentSongPosition];
+        _setCurrentSong(++_currentSongPosition);
       }
-
-      _play(_currentSong);
-      print('current song: ' + _currentSong.title);
       notifyListeners();
     }
   }
@@ -110,14 +109,10 @@ class MusicPlayerCore extends ChangeNotifier {
   void prevSong() {
     if (_currentSongPosition != null) {
       if (_currentSongPosition == 0) {
-        _currentSongPosition = _songs.length - 1;
-        _currentSong = _songs[_currentSongPosition];
+        _setCurrentSong(_songs.length - 1);
       } else {
-        _currentSongPosition--;
-        _currentSong = _songs[_currentSongPosition];
+        _setCurrentSong(--_currentSongPosition);
       }
-      _play(currentSong);
-      print('current song: ' + _currentSong.title);
       notifyListeners();
     }
   }

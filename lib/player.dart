@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/all_songs.dart';
 import 'package:music_player/widgets/play_widget.dart';
-import 'package:music_player/widgets/song_list_widget.dart';
 import 'package:music_player/widgets/song_queue_widget.dart';
 
 class MusicPlayer extends StatefulWidget {
